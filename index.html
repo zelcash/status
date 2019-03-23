@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>ZelCore Status - part of Zel Technologies GmbH</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+
+		<!-- Favicon -->
+		<link href="../images/favicon.ico" rel="shortcut icon"/>
+	</head>
+	<body>
+		<main>
+			<h1>ZelCore Status</h1>
+
+			<input type="text" class="live-search-box" placeholder="Search..." />
+
+			<div class="table100 ver6 mt-3">
+				<div class="table100-head">
+					<table>
+						<thead>
+							<tr class="row100 head">
+								<th class="cell100 column1">Asset</th>
+								<th class="cell100 column2">Status</th>
+								<th class="cell100 column3">Price</th>
+								<th class="cell100 column4">Links</th>
+								<th class="cell100 column5">Info</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+
+				<div class="table100-body js-pscroll">
+					<table>
+						<tbody id="allCoins">
+						</tbody>
+					</table>
+				</div>
+
+				<div id="allCoinsInfo">
+				</div>
+			</div>
+
+		</main>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+		<script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+		<script src="./coins.js" ></script>
+		<script>
+			$('.js-pscroll').each(function(){
+				var ps = new PerfectScrollbar(this);
+
+				$(window).on('resize', function(){
+					ps.update();
+				})
+			});
+		</script>
+		<script>
+			function getPrice(coinName) {
+				var result = null;
+				$.ajax({
+					async: false,
+					url: "https://api.coingecko.com/api/v3/simple/price?ids=" + coinName + "&vs_currencies=usd",
+					data: {data},
+					dataType: "json",
+					success: function(data){
+						result = data[coinName].usd;
+					}
+				});
+				return result;
+			}
+			function getConnectionStatus(explorerStatus) {
+				var result = null;
+				$.ajax({
+					async: false,
+					url: explorerStatus + "/api/sync",
+					data: {data},
+					dataType: "json",
+					success: function(data){
+						result = "Online";
+					},
+					error: function(data){
+						result = "Offline";
+					},
+					statusCode: {
+						404: function() {
+							result = "Update";
+						}
+					}
+				});
+				return result;
+			}
+			function displayArtists() {
+				
+				// Our JSON data
+				
+					var output = [];
+					var outputInfo = [];
+
+					for (var i in data.coins) {
+							output += "<tr class='row100 body'>";
+							output += "<td class='cell100 column1'>";
+							output += "<img src='" + data.coins[i].logo + "' style='width: 42px; margin-right: 10px;' />";
+							output += "<span class='search'>" + data.coins[i].coin + " (" + data.coins[i].ticker.toUpperCase() + ")</span>";
+							output += "</td>";
+							output += "<td class='cell100 column2'>";
+							const explorerStatus = data.coins[i].explorer;
+							if ( getConnectionStatus(explorerStatus).toLowerCase() == 'online') {
+								output += "<i class='fas fa-circle' style='color:limegreen'></i> "
+							};
+							if (getConnectionStatus(explorerStatus).toLowerCase() == 'offline') {
+								output += "<i class='fas fa-circle' style='color:red'></i> "
+							};
+							if (getConnectionStatus(explorerStatus).toLowerCase() == 'update') {
+								output += "<i class='fas fa-circle' style='color:yellow'></i> "
+							};
+							output += getConnectionStatus(explorerStatus);
+							output += "</td>";
+							output += "<td class='cell100 column3'>";
+
+							const coinName = data.coins[i].coin.toLowerCase();
+							output += "Price: $" + getPrice(coinName);
+
+							output += "</td>";
+							output += "<td class='cell100 column4'>";
+							if (data.coins[i].explorer != null) {
+								output += "<a href='" + data.coins[i].explorer + "'><span class='fa-stack fa-lg'><i class='fas fa-circle fa-stack-2x'></i><i class='fas fa-stack-1x fa-search fa-inverse'></i></span></a>"
+							};
+							if (data.coins[i].twitter != null) {
+								output += "<a href='" + data.coins[i].twitter + "'><span class='fa-stack fa-lg'><i class='fas fa-circle fa-stack-2x'></i><i class='fab fa-stack-1x fa-twitter fa-inverse'></i></span></a>"
+							};
+							if (data.coins[i].discord != null) {
+								output += "<a href='" + data.coins[i].discord + "'><span class='fa-stack fa-lg'><i class='fas fa-circle fa-stack-2x'></i><i class='fab fa-stack-1x fa-discord fa-inverse'></i></span></a>"
+							};
+							if (data.coins[i].telegram != null) {
+								output += "<a href='" + data.coins[i].telegram + "'><span class='fa-stack fa-lg'><i class='fas fa-circle fa-stack-2x'></i><i class='fab fa-stack-1x fa-telegram fa-inverse'></i></span></a>"
+							};
+							output += "</td>";
+							output += "<td class='cell100 column5'>";
+							if (data.coins[i].website != null) {
+								output += "<a href='" + data.coins[i].website + "'/><span class='fa-stack fa-lg'><i class='fas fa-circle fa-stack-2x'></i><i class='fas fa-stack-1x fa-globe fa-inverse'></i></span></a>"
+							};
+							if (data.coins[i].info != null) {
+								output += "<a href='#popup" + i + "'/><span class='fa-stack fa-lg'><i class='fas fa-circle fa-stack-2x'></i><i class='fas fa-stack-1x fa-info fa-inverse'></i></span></a>"
+							};
+							output += "</td>";
+							output += "</tr>";
+
+							// INFO
+
+							outputInfo += "<div id='popup" + i + "' class='overlay'>";
+							outputInfo += "<div class='popup'>";
+							outputInfo += "<h2>" + data.coins[i].coin + "</h2>";
+							outputInfo += "<a class='close' href='#'>&times;</a>";
+							outputInfo += "<div class='content'>" + data.coins[i].info + "</div>"; 
+							outputInfo += "</div></div>";
+					}
+					document.getElementById("allCoins").innerHTML=output;
+					document.getElementById("allCoinsInfo").innerHTML=outputInfo;
+			}
+			// Load the above function when the window loads
+			window.onload = displayArtists;
+		</script>
+		<script>
+			jQuery(document).ready(function($) {
+				$('.search').each(function() {
+					$(this).attr('data-search-term', $(this).text().toLowerCase() + $(this).find("ptag").text().toLowerCase());
+	
+				});
+	
+				$('.live-search-box').on('keyup', function() {
+	
+					var searchTerm = $(this).val().toLowerCase();
+	
+					$('.search').each(function() {
+	
+						if ($(this).filter('[data-search-term *= ' + searchTerm + ']').length > 0 || searchTerm.length < 1) {
+							$(this).parent().parent().show();
+						} else {
+							$(this).parent().parent().hide();
+						}
+	
+					});
+	
+				});
+	
+			});
+		</script>
+	</body>
+</html>

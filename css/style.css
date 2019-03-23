@@ -1,0 +1,101 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,500);
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #181716;
+  color: #999;
+}
+
+main {
+  display: block;
+  position: relative;
+  box-sizing: border-box;
+  padding: 30px;
+  width: 90%;
+  margin: auto;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+a {
+  color: slategray;
+}
+
+a:hover {
+  color: black;
+}
+
+.live-search-box {
+  color: #fff;
+  width: 100%;
+  display: block;
+  padding: 1em 1em 1em 2em;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: none;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  border-radius: 50px;
+  background-color: #232220
+}
+
+h1 {
+	color: #f9f9f9;
+  padding: 0 20px 20px 20px;
+  font-size: 32px;
+  font-weight: 300;
+}
+
+/* Status */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 25% auto;
+  padding: 25px;
+  background: #fff;
+  border-radius: 10px;
+  width: 30%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+
+.popup .close:hover {
+  color: #000;
+}
+
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+}
